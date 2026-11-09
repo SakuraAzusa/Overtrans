@@ -57,7 +57,7 @@ jobs:
         run: |
           $root = "dist\Overtrans"
           if (-not (Test-Path "$root\Overtrans.exe")) { throw "missing Overtrans.exe" }
-          foreach ($m in @("PP-OCRv6_det_small.onnx", "PP-OCRv6_rec_small.onnx")) {
+          foreach ($m in @("PP-OCRv6_det_small.onnx", "PP-OCRv6_rec_small.onnx", "korean_PP-OCRv5_rec_mobile.onnx")) {
             if (-not (Test-Path "$root\runtime\models\$m")) { throw "missing model: $m" }
           }
           if (-not (Test-Path "$root\LICENSE")) { throw "missing LICENSE" }

@@ -67,7 +67,22 @@ def main(root):
             except OSError as e:
                 print(f"  跳过 {f}: {e}")
 
-    # 2) cv2 的视频解码 DLL（只喂 numpy 图片，用不到）
+    # 2) 韩语模型：rapidocr 的 wheel 里默认没带（本机那份是运行时自动下载的），
+    #    全新环境构建会缺，导致「韩语引擎」永远是未安装。仓库里 vendor/ocr/ 存了一份，
+    #    缺就拷进去，保证两套 OCR 都随包发出。
+    ko_name = "korean_PP-OCRv5_rec_mobile.onnx"
+    have_ko = os.path.isdir(dst) and ko_name in os.listdir(dst)
+    if not have_ko:
+        os.makedirs(dst, exist_ok=True)
+        vend = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "vendor", "ocr")
+        src_ko = os.path.join(vend, ko_name)
+        if os.path.exists(src_ko):
+            shutil.copy2(src_ko, os.path.join(dst, ko_name))
+            print("  + 补入韩语模型（来自 vendor/ocr）")
+        else:
+            print("  ! vendor/ocr 里没有韩语模型，韩语功能需用户自行下载")
+
+    # 3) cv2 的视频解码 DLL（只喂 numpy 图片，用不到）
     cv2 = os.path.join(rt, "cv2")
     if os.path.isdir(cv2):
         for name in os.listdir(cv2):
