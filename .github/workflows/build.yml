@@ -1,0 +1,67 @@
+name: build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "发布用的 tag（例如 v1.0.0）"
+        required: true
+        default: "v1.0.0"
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: 打包
+        shell: cmd
+        run: |
+          python -m PyInstaller --noconfirm --clean --onedir --windowed ^
+            --name Overtrans ^
+            --contents-directory runtime ^
+            --icon "assets\overtrans.ico" ^
+            --add-data "app\default_config.json;app" ^
+            --add-data "assets;assets" ^
+            --collect-all rapidocr ^
+            --exclude-module matplotlib --exclude-module pandas --exclude-module scipy ^
+            --exclude-module PyQt5 --exclude-module PySide2 --exclude-module torch ^
+            main.py
+          python tools\prune_dist.py dist\Overtrans
+          copy README.md dist\Overtrans\README.md
+          copy LICENSE dist\Overtrans\LICENSE
+          copy THIRD_PARTY_NOTICES.md dist\Overtrans\THIRD_PARTY_NOTICES.md
+
+      - name: 压缩
+        run: Compress-Archive -Path dist\Overtrans\* -DestinationPath Overtrans-win64.zip -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Overtrans-win64
+          path: Overtrans-win64.zip
+          retention-days: 14
+
+      - name: 发布到 Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          name: Overtrans ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          files: Overtrans-win64.zip
+          generate_release_notes: true
+          fail_on_unmatched_files: true
