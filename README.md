@@ -59,7 +59,7 @@
 
 ## 快速开始
 
-1. 到 [Releases](../../releases) 下载 `Overtrans-1.0.0-win64.zip`
+1. 到 [Releases](../../releases/latest) 下载 `Overtrans-v1.0.0-win64.zip`
 2. 解压到任意目录（别放 `C:\Program Files`，程序要写配置和日志）
 3. 双击 `Overtrans.exe`
 4. 先开游戏，再点「开始监听」，然后点「悬浮窗」把它拖到游戏旁边
@@ -106,7 +106,8 @@ python main.py            # 直接跑
 build.bat                 # 打包 → dist\Overtrans\ + release\Overtrans-win64.zip
 ```
 
-推 `v1.0.0` 这种 tag 到 GitHub，Actions 会自动构建并发到 Releases（见 `.github/workflows/build.yml`）。
+推 `v1.0.0` 这种 tag 到 GitHub，Actions 会自动构建并发到 Releases（见 `.github/workflows/build.yml`）；
+也可以在 Actions 页面手动 Run workflow，填一个 tag 名。
 
 ## 目录结构
 
