@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>523343871/Overtrans · GitHub 预览</title>
+<style>
+  :root{
+    --bg:#ffffff; --canvas:#ffffff; --border:#d0d7de; --border-soft:#d8dee4;
+    --fg:#1f2328; --muted:#656d76; --accent:#0969da; --subtle:#f6f8fa;
+    --btn:#f6f8fa; --btn-hover:#f3f4f6; --green:#1a7f37; --chip:#ddf4ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f6f8fa;color:var(--fg);
+       font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,
+            "PingFang SC","Microsoft YaHei",sans-serif;}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .topbar{background:#24292f;color:#fff;height:62px;display:flex;align-items:center;
+          padding:0 32px;gap:16px;font-size:14px}
+  .topbar .logo{width:32px;height:32px;border-radius:50%;background:#fff;display:flex;
+                align-items:center;justify-content:center;color:#24292f;font-weight:700}
+  .topbar input{background:#fff;border:1px solid #57606a;border-radius:6px;height:30px;
+                width:280px;padding:0 10px;font-size:13px;color:#57606a}
+  .topbar .spacer{flex:1}
+  .topbar .icon{width:20px;height:20px;border-radius:50%;background:#57606a}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:24px 32px 60px}
+  .repo-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:20px}
+  .repo-head .owner{color:var(--accent);font-weight:400}
+  .repo-head .sep{color:var(--muted)}
+  .repo-head .name{color:var(--accent);font-weight:600}
+  .pill{border:1px solid var(--border);border-radius:2em;padding:1px 8px;font-size:12px;
+        color:var(--muted);font-weight:500}
+
+  .tabs{display:flex;gap:8px;border-bottom:1px solid var(--border);margin-bottom:20px;font-size:14px}
+  .tabs div{padding:8px 12px;color:var(--fg);display:flex;align-items:center;gap:6px}
+  .tabs div.active{border-bottom:2px solid #fd8c73;font-weight:600}
+  .tabs .count{background:#eaeef2;border-radius:2em;padding:0 6px;font-size:12px;color:#57606a}
+
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:24px;align-items:start}
+
+  .card{border:1px solid var(--border);border-radius:6px;background:var(--bg)}
+  .card-head{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);
+             background:var(--subtle);border-radius:6px 6px 0 0;font-size:13px;color:var(--muted)}
+  .card-head .branch{background:#fff;border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--fg)}
+  .card-body{padding:32px 40px 40px;font-size:15px;line-height:1.6}
+
+  .md h1{font-size:2em;border-bottom:1px solid var(--border-soft);padding-bottom:.3em;margin:.6em 0}
+  .md h2{font-size:1.5em;border-bottom:1px solid var(--border-soft);padding-bottom:.3em;margin:1.4em 0 .6em}
+  .md p{margin:0 0 16px}
+  .md img{max-width:100%}
+  .md code{background:rgba(175,184,193,.2);padding:.2em .4em;border-radius:6px;font-size:85%;
+           font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .md pre{background:var(--subtle);padding:16px;border-radius:6px;overflow:auto}
+  .md pre code{background:none;padding:0}
+  .md table{border-collapse:collapse;margin:0 0 16px;display:block;overflow:auto}
+  .md th,.md td{border:1px solid var(--border);padding:6px 13px}
+  .md th{background:var(--subtle)}
+  .md blockquote{margin:0 0 16px;padding:0 1em;color:var(--muted);border-left:.25em solid var(--border)}
+  .md ul{padding-left:2em;margin:0 0 16px}
+  .md hr{border:0;border-top:1px solid var(--border-soft);margin:24px 0}
+  .center{text-align:center}
+
+  .badge{display:inline-block;height:20px;border-radius:3px;font-size:11px;line-height:20px;
+         overflow:hidden;margin:0 2px;vertical-align:middle;font-weight:600;letter-spacing:.2px}
+  .badge span{display:inline-block;padding:0 6px;height:20px}
+  .badge .left{background:#555;color:#fff}
+  .badge .right-blue{background:#007ec6;color:#fff}
+  .badge .right-green{background:#97ca00;color:#fff}
+  .badge .right-blue2{background:#3776AB;color:#fff}
+
+  .moe{display:inline-block;border:1px solid var(--border);border-radius:6px;background:#fff;
+       padding:6px 14px;font-size:12px;color:var(--muted)}
+  .moe b{color:#d6336c;font-size:15px;letter-spacing:2px;font-family:monospace}
+
+  .side-box{border:1px solid var(--border);border-radius:6px;padding:16px;background:var(--bg);margin-bottom:16px}
+  .side-box h3{font-size:14px;margin:0 0 10px;font-weight:600}
+  .side-box .desc{color:var(--fg);margin-bottom:12px}
+  .topics{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .topic{background:var(--chip);color:#0550ae;border-radius:2em;padding:2px 10px;font-size:12px;font-weight:500}
+  .side-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--muted)}
+  .side-row b{color:var(--fg);font-weight:600}
+  .lang-bar{height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px}
+  .lang-bar i{display:block;height:100%}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+  .footnote{color:var(--muted);font-size:12px;margin-top:28px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">O</div>
+  <div style="opacity:.85">Overtrans</div>
+  <input value="Search or jump to…">
+  <div class="spacer"></div>
+  <div class="icon"></div>
+  <div class="icon"></div>
+  <div class="icon"></div>
+</div>
+
+<div class="wrap">
+  <div class="repo-head">
+    <span class="owner">523343871</span><span class="sep">/</span><span class="name">Overtrans</span>
+    <span class="pill">Public</span>
+  </div>
+
+  <div class="tabs">
+    <div class="active">◇ Code</div>
+    <div>◎ Issues <span class="count">0</span></div>
+    <div>◷ Pull requests <span class="count">0</span></div>
+    <div>▤ Actions</div>
+    <div>◈ Releases <span class="count">1</span></div>
+  </div>
+
+  <div class="cols">
+    <!-- 左：README -->
+    <div class="card">
+      <div class="card-head">
+        <span class="branch">main</span>
+        <span>1 Branch</span><span>·</span><span>1 Tag</span>
+        <span style="margin-left:auto">⌘ Go to file</span>
+        <span style="background:#1f883d;color:#fff;padding:3px 12px;border-radius:6px;font-weight:600">Code ▾</span>
+      </div>
+
+      <div class="card-body md">
+        <div class="center">
+          <img src="../assets/overtrans.png" width="110" alt="Overtrans">
+          <h1 style="border:0;margin:.2em 0 .3em">Overtrans</h1>
+          <p><strong>用于 OverField 快速识别翻译与回复的小工具，更好地和你的国际小朋友交流</strong></p>
+          <p>
+            <span class="badge"><span class="left">License</span><span class="right-green">MIT</span></span>
+            <span class="badge"><span class="left">Platform</span><span class="right-blue2">Windows 10/11 x64</span></span>
+            <span class="badge"><span class="left">Python</span><span class="right-blue">3.13</span></span>
+          </p>
+          <p><span class="moe">二次元访客计数 · <b>004521</b>　← 这里的猫娘小人在 GitHub 上是会动的计数图</span></p>
+        </div>
+
+        <hr>
+
+        <h2>这是什么</h2>
+        <p>在游戏里逛国际服，聊天框刷得飞快、语言还各不相同。Overtrans 盯住聊天区域，
+           <strong>用本地 OCR 把文字认出来</strong>，再交给翻译接口，最后把中文丢进一个能挂在游戏旁边的悬浮窗。
+           截图不上传、不注入游戏、不改游戏文件。</p>
+        <ul>
+          <li><strong>只读屏幕</strong>：靠截图 + 离线识别，不碰游戏内存，不怕被判定异常</li>
+          <li><strong>开箱即用</strong>：解压双击就能跑，不用装 Python、不用配环境</li>
+          <li><strong>免 Key 可用</strong>：内置免费翻译通道，失效自动换下一个</li>
+          <li><strong>省资源</strong>：画面不动就不识别；同一块反复识别没有新内容会自动降频</li>
+        </ul>
+
+        <h2>界面</h2>
+        <p>主界面：左边实时日志（原文 + 译文），右边一键开始监听。</p>
+        <p><img src="screenshots/main.png" alt="主界面"></p>
+        <p>悬浮窗：置顶半透明，贴在游戏边上，译文加粗、原文小字。</p>
+        <p class="center"><img src="screenshots/float.png" width="360" alt="悬浮窗"></p>
+        <p>首次启动引导：选识别语言 → 选翻译服务 → 拖框对准聊天区域。</p>
+        <p class="center"><img src="screenshots/onboarding.png" width="360" alt="首次引导"></p>
+
+        <h2>功能</h2>
+        <table>
+          <tr><th></th><th></th></tr>
+          <tr><td><strong>双采集区</strong></td><td>同时盯「聊天面板」和「底部滚动预览」；面板收起时自动切到下面那条</td></tr>
+          <tr><td><strong>滚动去重</strong></td><td>上下翻历史再滚回来不会重复翻译，带本地翻译记忆</td></tr>
+          <tr><td><strong>表情归一</strong></td><td>同一张贴纸被 OCR 切成几种花样也只算一条，不刷屏</td></tr>
+          <tr><td><strong>半透明适配</strong></td><td>区分「气泡里的字」和「背后场景透进来的字」，不把路人 ID 当发言</td></tr>
+          <tr><td><strong>自适应降频</strong></td><td>表情动画在动但内容没变 → 自动抬高阈值，不再反复 OCR</td></tr>
+          <tr><td><strong>韩语按需</strong></td><td>韩语模型可后装，开关打开才加载（省 40% 时间 / 60MB 内存）</td></tr>
+        </table>
+
+        <h2>快速开始</h2>
+        <p>到 Releases 下载 <code>Overtrans-1.0.0-win64.zip</code>，解压任意目录，双击 <code>Overtrans.exe</code>，
+           先开游戏再点「开始监听」。</p>
+
+        <h2>翻译服务怎么选</h2>
+        <table>
+          <tr><th>服务</th><th>费用</th><th>说明</th></tr>
+          <tr><td>Microsoft 翻译</td><td>免费</td><td>无需注册；质量一般，失效自动切下一个</td></tr>
+          <tr><td>MyMemory</td><td>免费</td><td>无需注册，按 IP 限流；质量一般，当兜底</td></tr>
+          <tr><td>Google 翻译</td><td>免费</td><td>无需 Key，国内直连基本不通</td></tr>
+          <tr><td>DeepSeek / 硅基流动 / 智谱 …</td><td>有免费额度</td><td>质量最好，需自己填 Key</td></tr>
+        </table>
+
+        <blockquote>建议：长期用就注册一个智谱（glm-4-flash 免费）或硅基流动，质量比免 Key 通道好一大截。</blockquote>
+
+        <h2>许可</h2>
+        <p>MIT。第三方组件许可见 THIRD_PARTY_NOTICES.md。本项目与 OverField 官方无关，仅读取屏幕画面。</p>
+      </div>
+    </div>
+
+    <!-- 右：About -->
+    <div>
+      <div class="side-box">
+        <h3>About</h3>
+        <div class="desc">用于overfield快速识别翻译与回复小工具，更好的与你的国际小朋友交流</div>
+        <div class="topics">
+          <span class="topic">ocr</span>
+          <span class="topic">translate</span>
+          <span class="topic">rapidocr</span>
+          <span class="topic">overfield</span>
+          <span class="topic">game-tools</span>
+          <span class="topic">windows</span>
+        </div>
+        <hr style="border:0;border-top:1px solid var(--border-soft);margin:14px 0">
+        <div class="side-row">⭐ <span>Stars</span><b>0</b></div>
+        <div class="side-row">⑂ <span>Forks</span><b>0</b></div>
+        <div class="side-row">◉ <span>Watchers</span><b>1</b></div>
+      </div>
+
+      <div class="side-box">
+        <h3>Releases</h3>
+        <div class="side-row"><b>v1.0.0</b><span>Latest</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">Overtrans-1.0.0-win64.zip · 114.8 MB</div>
+      </div>
+
+      <div class="side-box">
+        <h3>Languages</h3>
+        <div class="lang-bar">
+          <i style="width:96%;background:#3572A5"></i>
+          <i style="width:3%;background:#f1e05a"></i>
+          <i style="width:1%;background:#89e051"></i>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">
+          <span class="dot" style="background:#3572A5"></span>Python 96.0%<br>
+          <span class="dot" style="background:#f1e05a"></span>Batchfile 3.0%<br>
+          <span class="dot" style="background:#89e051"></span>Shell 1.0%
+        </div>
+      </div>
+
+      <div class="side-box">
+        <h3>License</h3>
+        <div style="font-size:13px">MIT License</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">这是本地预览，用来确认页面观感；实际样式以 GitHub 渲染为准。</div>
+</div>
+</body>
+</html>
