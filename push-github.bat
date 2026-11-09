@@ -8,7 +8,7 @@ echo  Overtrans -^> GitHub 一键上传
 echo ============================================
 echo.
 
-set OWNER=523343871
+set OWNER=SakuraAzusa
 set REPO=Overtrans
 set DESC=用于overfield快速识别翻译与回复小工具，更好的与你的国际小朋友交流
 
