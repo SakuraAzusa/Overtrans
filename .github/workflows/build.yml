@@ -13,6 +13,9 @@ on:
 permissions:
   contents: write
 
+env:
+  PY_INSTALLER: pyinstaller==6.22.3
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -28,7 +31,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pyinstaller
+          pip install $env:PY_INSTALLER
 
       - name: 打包
         shell: cmd
@@ -48,13 +51,35 @@ jobs:
           copy LICENSE dist\Overtrans\LICENSE
           copy THIRD_PARTY_NOTICES.md dist\Overtrans\THIRD_PARTY_NOTICES.md
 
+      - name: 检查产物
+        shell: pwsh
+        run: |
+          $root = "dist\Overtrans"
+          if (-not (Test-Path "$root\Overtrans.exe")) { throw "缺少 Overtrans.exe" }
+          $models = @("PP-OCRv6_det_small.onnx", "PP-OCRv6_rec_small.onnx")
+          foreach ($m in $models) {
+            if (-not (Test-Path "$root\runtime\models\$m")) { throw "缺少模型 $m" }
+          }
+          if (-not (Test-Path "$root\LICENSE")) { throw "缺少 LICENSE" }
+          if (Test-Path "$root\config.json") { throw "包内不应包含 config.json" }
+          $mb = [math]::Round(((Get-ChildItem $root -Recurse -File | Measure-Object Length -Sum).Sum / 1MB), 1)
+          Write-Host "产物大小 $mb MB"
+          if ($mb -lt 80 -or $mb -gt 200) { throw "体积异常: $mb MB" }
+          Write-Host "根目录:" (Get-ChildItem $root -Name | Sort-Object | Join-String -Separator ", ")
+
       - name: 压缩
-        run: Compress-Archive -Path dist\Overtrans\* -DestinationPath Overtrans-win64.zip -Force
+        shell: pwsh
+        run: |
+          $tag = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ inputs.tag }}" } else { "${{ github.ref_name }}" }
+          $name = "Overtrans-$tag-win64.zip"
+          Compress-Archive -Path "dist\Overtrans\*" -DestinationPath $name -Force
+          "ZIP_NAME=$name" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "已生成 $name"
 
       - uses: actions/upload-artifact@v4
         with:
           name: Overtrans-win64
-          path: Overtrans-win64.zip
+          path: ${{ env.ZIP_NAME }}
           retention-days: 14
 
       - name: 发布到 Releases
@@ -62,6 +87,6 @@ jobs:
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
           name: Overtrans ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
-          files: Overtrans-win64.zip
+          files: ${{ env.ZIP_NAME }}
           generate_release_notes: true
           fail_on_unmatched_files: true

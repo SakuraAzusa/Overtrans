@@ -1,6 +1,12 @@
-rapidocr>=3.0
-onnxruntime>=1.17
-pillow>=10.0
-mss>=9.0
-requests>=2.31
-numpy>=1.24
+# 运行时依赖 —— 版本锁定为实际验证过的一组
+# （rapidocr 不同版本自带的默认模型不一样，不锁会出现「同一份代码在别人机器上模型不同」）
+rapidocr==3.10.0
+onnxruntime==1.31.1
+opencv-python-headless==5.0.0.93
+pillow==13.0.0
+numpy==2.5.4
+mss==10.2.0
+requests==2.34.2
+
+# 打包用，本地 build.bat 需要（CI 里单独装固定版本）
+# pyinstaller==6.22.3
