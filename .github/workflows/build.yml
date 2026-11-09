@@ -1,0 +1,63 @@
+name: build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: 打包
+        run: |
+          python -m PyInstaller --noconfirm --clean --onedir --windowed ^
+            --name Overtrans ^
+            --contents-directory runtime ^
+            --icon "assets\overtrans.ico" ^
+            --add-data "app\default_config.json;app" ^
+            --add-data "assets;assets" ^
+            --collect-all rapidocr ^
+            --exclude-module matplotlib --exclude-module pandas --exclude-module scipy ^
+            --exclude-module PyQt5 --exclude-module PySide2 --exclude-module torch ^
+            main.py
+          python tools\prune_dist.py dist\Overtrans
+          copy README.md dist\Overtrans\README.md
+          copy LICENSE dist\Overtrans\LICENSE
+          copy THIRD_PARTY_NOTICES.md dist\Overtrans\THIRD_PARTY_NOTICES.md
+
+      # 有签名证书时取消注释（见 signing/README.md）
+      # - name: 签名
+      #   env:
+      #   PFX_BASE64: ${{ secrets.PFX_BASE64 }}
+      #   PFX_PASS: ${{ secrets.PFX_PASS }}
+      #   run: |
+      #     [IO.File]::WriteAllBytes("cert.pfx", [Convert]::FromBase64String($env:PFX_BASE64))
+      #     set PFX_PATH=%CD%\cert.pfx
+      #     signing\sign.bat dist\Overtrans\Overtrans.exe
+
+      - name: 压缩
+        run: Compress-Archive -Path dist\Overtrans\* -DestinationPath Overtrans-win64.zip -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Overtrans-win64
+          path: Overtrans-win64.zip
+
+      - name: 发布
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Overtrans-win64.zip

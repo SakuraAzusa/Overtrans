@@ -1,0 +1,74 @@
+{
+  "track_window": true,
+  "window_title": "OverField",
+  "interval_ms": 600,
+  "source_lang": "auto",
+  "target_lang": "zh-CN",
+  "filter_chinese": true,
+  "ko_mode": false,
+  "log_enabled": true,
+  "ocr_langs": [
+    "ja"
+  ],
+  "provider": "microsoft",
+  "openai": {
+    "base_url": "https://api.deepseek.com/v1",
+    "api_key": "",
+    "model": "",
+    "fallbacks": []
+  },
+  "deepl": {
+    "api_key": "",
+    "endpoint": "https://api-free.deepl.com/v2/translate"
+  },
+  "google": {},
+  "ocr": {
+    "threads": 2,
+    "autocontrast": true,
+    "diff_ratio": 0.002,
+    "idle_max_sec": 4.0,
+    "max_batch": 30,
+    "tm_threshold": 0.8,
+    "tm_max": 1500,
+    "det_tiny": false,
+    "perf": "balanced"
+  },
+  "float": {
+    "geometry": "420x560+1180+60",
+    "font_size": 11,
+    "opacity": 0.9
+  },
+  "skip_words": [
+    "附近",
+    "世界",
+    "系统",
+    "私聊",
+    "发送",
+    "请输入内容",
+    "记录",
+    "收杆",
+    "生活",
+    "互动",
+    "频道",
+    "队伍",
+    "公会",
+    "招募",
+    "主线",
+    "任务",
+    "前往",
+    "时装",
+    "探索员",
+    "手册",
+    "通行证",
+    "装饰",
+    "宠物",
+    "活动"
+  ],
+  "version": "overtrans-1.0",
+  "_note_zones": "识别区域默认按游戏 UI 比例算；用户框选过会写进 zones 覆盖默认值",
+  "first_run": true,
+  "zones": {},
+  "microsoft": {
+    "auth_url": ""
+  }
+}

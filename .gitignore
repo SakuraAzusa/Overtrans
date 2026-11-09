@@ -1,0 +1,23 @@
+# 运行产物
+config.json
+cache/
+logs/
+dist/
+build/
+release/
+*.spec
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 本地模型副本（构建时从依赖里取，不入库）
+models/
+
+# 签名私钥/证书，永远不要提交
+signing/*.pfx
+signing/*.p12
+signing/*.cer

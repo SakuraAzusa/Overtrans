@@ -1,0 +1,6 @@
+rapidocr>=3.0
+onnxruntime>=1.17
+pillow>=10.0
+mss>=9.0
+requests>=2.31
+numpy>=1.24
