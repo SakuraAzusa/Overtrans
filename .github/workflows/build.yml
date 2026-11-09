@@ -51,21 +51,22 @@ jobs:
           copy LICENSE dist\Overtrans\LICENSE
           copy THIRD_PARTY_NOTICES.md dist\Overtrans\THIRD_PARTY_NOTICES.md
 
-      - name: 检查产物
+      # 中文在 run 块里会被按 ANSI 解码成乱码，这里统一用英文，日志才看得清
+      - name: Verify dist
         shell: pwsh
         run: |
           $root = "dist\Overtrans"
-          if (-not (Test-Path "$root\Overtrans.exe")) { throw "缺少 Overtrans.exe" }
-          $models = @("PP-OCRv6_det_small.onnx", "PP-OCRv6_rec_small.onnx")
-          foreach ($m in $models) {
-            if (-not (Test-Path "$root\runtime\models\$m")) { throw "缺少模型 $m" }
+          if (-not (Test-Path "$root\Overtrans.exe")) { throw "missing Overtrans.exe" }
+          foreach ($m in @("PP-OCRv6_det_small.onnx", "PP-OCRv6_rec_small.onnx")) {
+            if (-not (Test-Path "$root\runtime\models\$m")) { throw "missing model: $m" }
           }
-          if (-not (Test-Path "$root\LICENSE")) { throw "缺少 LICENSE" }
-          if (Test-Path "$root\config.json") { throw "包内不应包含 config.json" }
+          if (-not (Test-Path "$root\LICENSE")) { throw "missing LICENSE" }
+          if (-not (Test-Path "$root\README.md")) { throw "missing README.md" }
+          if (Test-Path "$root\config.json") { throw "config.json must not be packaged" }
           $mb = [math]::Round(((Get-ChildItem $root -Recurse -File | Measure-Object Length -Sum).Sum / 1MB), 1)
-          Write-Host "产物大小 $mb MB"
-          if ($mb -lt 80 -or $mb -gt 200) { throw "体积异常: $mb MB" }
-          Write-Host "根目录:" (Get-ChildItem $root -Name | Sort-Object | Join-String -Separator ", ")
+          Write-Host "dist size: $mb MB"
+          if ($mb -lt 150 -or $mb -gt 320) { throw "unexpected size: $mb MB (expect 150-320)" }
+          Write-Host ("root entries: " + ((Get-ChildItem $root -Name) -join ", "))
 
       - name: 压缩
         shell: pwsh
